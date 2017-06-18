@@ -10,6 +10,8 @@ WORKDIR /var/www/html
 
 # Pull the tests from github into non empty directory
 COPY . /var/www/html
+COPY kb-docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["kb-docker-entrypoint.sh"]
 
 #RUN git init
 #RUN git remote add origin https://shayams:Aa123456@github.com/Soluto/knowledgebase-unit-tests.git

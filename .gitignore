@@ -3,6 +3,7 @@
 !/wp-test-includes/
 !/data/
 !Dockerfile
+!kb-docker-entrypoint.sh
 !phpunit.xml
 !wp-tests-config.php
 !.gitignore
