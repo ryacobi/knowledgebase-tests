@@ -1,5 +1,5 @@
 <phpunit 
-	bootstrap='./tests/bootstrap.php'
+	bootstrap='./wp-test-includes/kb-bootstrap.php'
 	backupGlobals='false'
 	colors='true'
 	convertErrorsToExceptions='true'
@@ -7,7 +7,7 @@
 	convertWarningsToExceptions='true'>
 	<testsuites>
 		<testsuite>
-			<directory prefix="test-" suffix=".php">./tests/</directory>
+			<directory prefix="test-" suffix=".php">./wp-content/plugins/acf-extentions/tests</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
