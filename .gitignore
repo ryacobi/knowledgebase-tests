@@ -1,0 +1,8 @@
+/*
+/*/
+!/wp-test-includes/
+!/data/
+!Dockerfile
+!phpunit.xml
+!wp-tests-config.php
+!.gitignore

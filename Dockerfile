@@ -2,7 +2,7 @@ FROM wordpress:latest
 
 # Update aptitude with new repo and installing git + phpunit
 RUN apt-get update && \
-    apt-get -y install git-all && \
+    apt-get -y install git && \
     apt-get -y install phpunit
 
 # Move to WP directory
