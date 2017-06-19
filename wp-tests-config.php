@@ -41,7 +41,7 @@ define('DB_NAME', 'kbDBbpv0m');
 define('DB_USER', getenv('WORDPRESS_DB_USER'));
 
 /** MySQL database password */
-define('DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD');
+define('DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD'));
 
 /** MySQL hostname */
 define('DB_HOST', getenv('WORDPRESS_DB_HOST'));
