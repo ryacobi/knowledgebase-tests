@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "yes"
 # Pull theme from github into non empty directory
 cd /var/www/html/wp-content/themes
 git init

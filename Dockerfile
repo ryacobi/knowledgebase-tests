@@ -1,4 +1,4 @@
-FROM wordpress:latest
+FROM wordpress:4.8-php5.6-apache
 
 # Update aptitude with new repo and installing git + phpunit
 RUN apt-get update && \
@@ -11,7 +11,9 @@ WORKDIR /var/www/html
 # Pull the tests from github into non empty directory
 COPY . /var/www/html
 COPY kb-docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["kb-docker-entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+RUN ls -ltr /usr/local/bin
 
 #RUN git init
 #RUN git remote add origin https://shayams:Aa123456@github.com/Soluto/knowledgebase-unit-tests.git
