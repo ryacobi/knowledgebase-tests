@@ -6,4 +6,5 @@
 !kb-docker-entrypoint.sh
 !phpunit.xml
 !wp-tests-config.php
+!docker-compose.yml
 !.gitignore
