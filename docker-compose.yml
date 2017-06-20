@@ -15,7 +15,7 @@ services:
    wordpress:
      depends_on:
        - db
-     image: test:latest
+     image: soluto/knowledgebase-tests:latest
      ports:
        - "8000:80"
      restart: always
