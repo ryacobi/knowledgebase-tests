@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ls -ltr /usr/local/bin
-
 # Pull theme from github into non empty directory
 mkdir -p /var/www/html/wp-content/themes
 cd /var/www/html/wp-content/themes
@@ -23,3 +21,5 @@ cd /var/www/html/
 
 # Run the original entry point (copied by wordpress's dockerFile to )
 /usr/local/bin/docker-entrypoint.sh $1
+
+phpunit
