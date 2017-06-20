@@ -37,7 +37,7 @@ define( 'WP_DEBUG_LOG', true );
 
 #define('DB_NAME', 'kbDBbpv0m');
 
-define('DB_NAME', getenv('WORDPRESS_DB_NAME');
+define('DB_NAME', getenv('WORDPRESS_DB_NAME'));
 
 /** MySQL database username */
 define('DB_USER', getenv('WORDPRESS_DB_USER'));
