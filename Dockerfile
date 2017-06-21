@@ -16,7 +16,3 @@ COPY kb-docker-entrypoint.sh /usr/local/bin/
 RUN chmod 777 /usr/local/bin/kb-docker-entrypoint.sh
 
 ENTRYPOINT ["kb-docker-entrypoint.sh","apache2-foreground"]
-
-#RUN git init
-#RUN git remote add origin https://shayams:Aa123456@github.com/Soluto/knowledgebase-unit-tests.git
-#RUN git pull origin master
