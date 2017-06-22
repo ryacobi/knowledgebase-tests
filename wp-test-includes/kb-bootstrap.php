@@ -14,8 +14,7 @@ function _manually_load_environment() {
 	
 	// Update array with plugins to include ...
 	$plugins_to_active = array(
-		'acf-extentions/acf-extentions.php',
-		//'lingotek-translation/lingotek.php',
+		'acf-extentions/acf-extentions.php'
 	);
 
 	update_option( 'active_plugins', $plugins_to_active );
