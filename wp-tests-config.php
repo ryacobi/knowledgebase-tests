@@ -1,5 +1,7 @@
 <?php
 
+set_include_path("/var/www/html/data/vendor"); 
+
 /* Path to the WordPress codebase you'd like to test. Add a forward slash in the end. */
 define( 'ABSPATH', dirname( __FILE__ ).'/' );
 
