@@ -21,7 +21,6 @@ services:
      ports:
        - "8000:80"
      restart: always
-     command: phpunit
      networks:
        - wordpress_test_network
      environment:
