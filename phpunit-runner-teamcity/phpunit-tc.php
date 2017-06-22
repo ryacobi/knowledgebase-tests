@@ -1,5 +1,6 @@
 <?php
-require_once ('/usr/share/php/PHPUnit/Autoload.php');
+set_include_path('/usr/share/php:/Applications/XAMPP/xamppfiles/lib/php');
+require_once ('PHPUnit/Autoload.php');
 
 class TeamCity_PHPUnit_Framework_TestListener
     implements PHPUnit_Framework_TestListener
