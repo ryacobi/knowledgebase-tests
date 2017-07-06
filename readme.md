@@ -1,5 +1,4 @@
-How to run PHPUnit on your local environment
-============================================
+###How to run PHPUnit on your local environment
 
 1. clone this repository to some folder
 2. copy all the content to the root folder of the website (wp-test-includes should be a sibling of wp-includes)
@@ -12,8 +11,7 @@ How to run PHPUnit on your local environment
 5. Open command line/terminal/bash. Go to the website root folder and run PHPUnit
 
 
-How to add tests to the theme
-=============================
+###How to add tests to the theme
 
 1. Add appropriate subfolder to /path/to/website/wp-content/themes/empty-theme/tests. 
   * Path should reflect the structure of the tested code. e.g. the test functions of empty-theme/components/feedback will be placed under empty-theme/tests/components/feedback
