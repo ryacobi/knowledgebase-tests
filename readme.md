@@ -8,6 +8,7 @@
     3. DB_PASSWORD
     4. DB_HOST
 4. For Windows only: add to the system PATH the following value: `c:\xampplite\php`
+5. In case you have the folder mu-plugins under wp-content, move all of its content to a different folder
 5. Open command line/terminal/bash. Go to the website root folder and run PHPUnit
 
 
