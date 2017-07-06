@@ -50,7 +50,7 @@ define('DB_HOST', getenv('WORDPRESS_DB_HOST'));
 define('DB_CHARSET', 'utf8');
 
 /** The Database Collate type. Don't change this if in doubt. */
-define('DB_COLLATE', '');
+define('DB_COLLATE', 'utf8_unicode_ci');
 
 $table_prefix  = 'wptests_';   // Only numbers, letters, and underscores please!
 
