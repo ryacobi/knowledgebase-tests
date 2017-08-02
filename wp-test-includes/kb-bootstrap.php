@@ -14,7 +14,8 @@ function _manually_load_environment() {
 	
 	// Update array with plugins to include ...
 	$plugins_to_active = array(
-		'acf-extentions/acf-extentions.php'
+		'acf-extentions/acf-extentions.php',
+		'language-support/language-support.php'
 	);
 
 	update_option( 'active_plugins', $plugins_to_active );
