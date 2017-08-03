@@ -38,8 +38,18 @@ This folder will function as a "view" to the wordpress folder in the container. 
 7. Run `gulp build` from the theme's folder
 8. Clone the plugin's repository to `knowledgebase-plugins` under the _root_ folder
 9. Run `docker-compose -f docker-compose-local.yml up` from the folder you cloned this repo to
+10. For Windows Only:
+    * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
+    * Then, you'll get another pop-up window where you need to type your local credentials (your Soluto username and password)  
 10. You are done! - you can now open http://localhost:8000/ to configure your wordpress instance.
-11. To enable debug logs:
+11. Copy from production all relevant plugins:
+    * Advanced Custom Fields Pro
+    * CPT UI
+    * << TO COMPLETE >>
+12. Import post status definitions from production:
+    * In https://kb.mysoluto.com/wp-admin: Custom Fields -> Tools -> Toggle All -> Download Export File
+    * In https://localhost:8000/wp-admin: Custom Fields -> Tools -> Choose File -> Import
+13. To enable debug logs:
     * Go to the `wordpress-docker-data` folder and open `wp-config.php` for editing
     * Replace 
     ```php
