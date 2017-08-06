@@ -59,3 +59,9 @@ This folder will function as a "view" to the wordpress folder in the container. 
   * Path should reflect the structure of the tested code. e.g. the test functions of `empty-theme/components/feedback` will be placed under `empty-theme/tests/components/feedback`
 2. File name should start with "test-" and end with ".php".
 3. Copy structure and use example from `/path/to/website/wp-content/themes/empty-theme/tests/components/some_component/test-some-component.php`
+
+### Q&A (Troubleshooting)
+
+Q: Why does my wp-json endpint does not work
+A: According to [this](https://developer.wordpress.org/rest-api/extending-the-rest-api/routes-and-endpoints/) you need to enable [pretty permalinks](https://codex.wordpress.org/Introduction_to_Blogging#Pretty_Permalinks) so the wp-json endpoint will work.  
+Just go to the permalink in the settings, Select the 'Custom Structure' and put '/%post_id%'
