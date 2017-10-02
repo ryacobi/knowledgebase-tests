@@ -31,8 +31,11 @@ In the next few steps we will call this folder the _root_ (in our exapmle \var\d
 3. Clone the theme's repository (https://github.com/Soluto/knowledgebase-wordpress-theme) to `knowledgebase-wordpress-theme` under the _root_ folder
 4. Create a folder named `wordpress-docker-data` under the _root_ folder  
 This folder will function as a "view" to the wordpress folder in the container. You will be able to edit and open wp files from it (for ex the debug file)
-5. [Install composer](https://getcomposer.org/download/) and run it to install our components from the theme's folder
-    * On mac you download a file called composer.phar to the theme's folder and run `php composer.phar install`
+5. Install and run [composer](https://getcomposer.org/download/):
+    * OSX/Linux:
+        - Go to the themes folder
+        - `wget https://getcomposer.org/composer.phar`
+        - `php composer.phar install`
     * On windows you can install composer globaly and run `composer install` from the theme's folder
 6. Run `npm install` form the theme's folder
 7. Run `gulp build` from the theme's folder
