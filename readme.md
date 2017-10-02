@@ -37,7 +37,7 @@ This folder will function as a "view" to the wordpress folder in the container. 
 6. Run `npm install` form the theme's folder
 7. Run `gulp build` from the theme's folder
 8. Clone the plugin's repository (https://github.com/Soluto/knowledgebase-plugins) to `knowledgebase-plugins` under the _root_ folder
-9. Run `docker-compose -f docker-compose-local.yml up` from the folder you cloned this repo to
+9. Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up` from the folder you cloned this repo to
 10. For Windows Only:
     * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
     * Then, you'll get another pop-up window where you need to type your local credentials (your Soluto username and password)  
