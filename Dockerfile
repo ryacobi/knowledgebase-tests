@@ -1,4 +1,4 @@
-FROM wordpress:4.8-php5.6-apache
+FROM wordpress:4.8.2-php7.1-apache
 
 # Update aptitude with new repo and installing git + phpunit
 RUN apt-get update && \
