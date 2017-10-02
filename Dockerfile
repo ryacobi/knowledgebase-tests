@@ -15,4 +15,4 @@ COPY kb-docker-entrypoint.sh /usr/local/bin/
 
 RUN chmod 777 /usr/local/bin/kb-docker-entrypoint.sh
 
-CMD ["/usr/local/bin/docker-entrypoint.sh", "apache2-foreground"]
+ENTRYPOINT ["kb-docker-entrypoint.sh","apache2-foreground"]
