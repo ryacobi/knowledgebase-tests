@@ -28,7 +28,7 @@ This repo uses docker to run wordpress insance with phpunit inside.
 1. Clone this repository (for ex: to \var\development\knowledgebase-tests)  
 In the next few steps we will call this folder the _root_ (in our exapmle \var\devlopment)
 2. Login to Soluto's dockerhub using `docker login`
-3. Clone the theme's repository (`https://github.com/Soluto/knowledgebase-wordpress-theme`) to `knowledgebase-wordpress-theme` under the _root_ folder
+3. Clone the theme's repository (https://github.com/Soluto/knowledgebase-wordpress-theme) to `knowledgebase-wordpress-theme` under the _root_ folder
 4. Create a folder named `wordpress-docker-data` under the _root_ folder  
 This folder will function as a "view" to the wordpress folder in the container. You will be able to edit and open wp files from it (for ex the debug file)
 5. [Install composer](https://getcomposer.org/download/) and run it to install our components from the theme's folder
@@ -36,7 +36,7 @@ This folder will function as a "view" to the wordpress folder in the container. 
     * On windows you can install composer globaly and run `composer install` from the theme's folder
 6. Run `npm install` form the theme's folder
 7. Run `gulp build` from the theme's folder
-8. Clone the plugin's repository (`https://github.com/Soluto/knowledgebase-plugins`) to `knowledgebase-plugins` under the _root_ folder
+8. Clone the plugin's repository (https://github.com/Soluto/knowledgebase-plugins) to `knowledgebase-plugins` under the _root_ folder
 9. Run `docker-compose -f docker-compose-local.yml up` from the folder you cloned this repo to
 10. For Windows Only:
     * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
