@@ -4,7 +4,7 @@ FROM wordpress:4.8.2-php7.1-apache
 RUN apt-get update && \
     apt-get -y install git && \
     apt-get -y install phpunit && \
-    apt-get -y install php5-mysql
+    apt-get -y install php7.0-mysql
 
 # Move to WP directory
 WORKDIR /var/www/html
