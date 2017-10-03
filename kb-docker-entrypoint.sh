@@ -4,7 +4,7 @@
 mkdir -p /var/www/html/wp-content/themes
 cd /var/www/html/wp-content/themes
 git init
-git remote add origin https://shayams:Aa123456@github.com/Soluto/knowledgebase-wordpress-theme.git
+git remote add origin git@github.com:Soluto/knowledgebase-wordpress-theme.git
 git fetch origin master
 # Cause we need to overide the files in the folder
 git reset --hard origin/master
@@ -20,7 +20,7 @@ php composer.phar install
 mkdir -p /var/www/html/wp-content/plugins
 cd /var/www/html/wp-content/plugins
 git init
-git remote add origin https://shayams:Aa123456@github.com/Soluto/knowledgebase-plugins.git
+git remote add origin git@github.com:Soluto/knowledgebase-plugins.git
 git pull origin master
 
 # Set the working dir to be the root of WP

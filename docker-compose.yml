@@ -24,6 +24,8 @@ services:
      restart: always
      networks:
        - wordpress_test_network
+     volumes:
+       - ~/.ssh:/root/.ssh
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
