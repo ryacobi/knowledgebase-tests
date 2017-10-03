@@ -19,10 +19,8 @@ This repo uses docker to run wordpress insance with phpunit inside.
 
 ### With Docker
 1. Clone this repository
-2. Login to Soluto's dockerhub using `docker login`
-3. Run `docker-compose up` from the folder you cloned the repo to
-4. Get the CONTAINER ID of the container we started by runing `docker ps` and search for a container with the name 'knowledgebasetests_wordpress_1'
-5. Run `docker exec -it <container id> phpunit`
+2. Run `docker-compose up -d` from the folder you cloned the repo to
+3. Run `docker-compose exec wordpress phpunit`
 
 ## How to run wordpress instance for development
 1. Clone this repository (for ex: to \var\development\knowledgebase-tests)  
@@ -40,7 +38,7 @@ This folder will function as a "view" to the wordpress folder in the container. 
 6. Run `npm install` form the theme's folder
 7. Run `gulp build` from the theme's folder
 8. Clone the plugin's repository (https://github.com/Soluto/knowledgebase-plugins) to `knowledgebase-plugins` under the _root_ folder
-9. Run `docker-compose -f docker-compose.yml -f docker-compose.local.yml up` from the folder you cloned this repo to
+9. Run `docker-compose up -d` from the folder you cloned this repo to
 10. For Windows Only:
     * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
     * Then, you'll get another pop-up window where you need to type your local credentials (your Soluto username and password)  
