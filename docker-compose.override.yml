@@ -4,5 +4,5 @@ services:
    wordpress:
      volumes:
        - ../wordpress-docker-data:/var/www/html
-       - ../knowledgebase-plugins:/var/www/html/wp-content/plugins:ro
-       - ../knowledgebase-wordpress-theme:/var/www/html/wp-content/themes/empty-theme:ro
+       - ../knowledgebase-plugins:/var/www/html/wp-content/plugins
+       - ../knowledgebase-wordpress-theme:/var/www/html/wp-content/themes/empty-theme
