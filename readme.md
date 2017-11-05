@@ -15,7 +15,7 @@ This repo uses docker to run wordpress insance with phpunit inside.
     4. DB_HOST
 4. For Windows only: add to the system PATH the following value: `c:\xampplite\php`
 5. In case you have the folder mu-plugins under wp-content, move all of its content to a different folder
-5. Open command line/terminal/bash. Go to the website root folder and run PHPUnit
+6. Open command line/terminal/bash. Go to the website root folder and run PHPUnit
 
 ### With Docker
 1. Clone this repository
@@ -23,37 +23,42 @@ This repo uses docker to run wordpress insance with phpunit inside.
 3. Run `docker-compose exec wordpress phpunit`
 
 ## How to run wordpress instance for development
-1. Clone this repository (for ex: to \var\development\knowledgebase-tests)  
-In the next few steps we will call this folder the _root_ (in our exapmle \var\devlopment)
-2. Login to Soluto's dockerhub using `docker login`
-3. Clone the theme's repository (https://github.com/Soluto/knowledgebase-wordpress-theme) to `knowledgebase-wordpress-theme` under the _root_ folder
-4. Create a folder named `wordpress-docker-data` under the _root_ folder  
+1. Create a new directory that will contain the 3 repositories. In the next steps we will call this directory the _root_ (e.g. `/home/projects/wordpress-dev`)
+If you want to change the structure of the directories, make sure to map the paths in `knowledgebase-tests/docker-compose.override.yml`
+2. Clone this repository under the _root_ directory (i.e. `_root_/knowledgebase-tests`)
+3. Login to Soluto's dockerhub using `docker login`
+4. Clone the [theme repository](https://github.com/Soluto/knowledgebase-wordpress-theme) under the _root_ folder (i.e. `_root_/knowledgebase-wordpress-theme`)
+5. Create a folder named `wordpress-docker-data` under the _root_ folder  
 This folder will function as a "view" to the wordpress folder in the container. You will be able to edit and open wp files from it (for ex the debug file)
-5. Install and run [composer](https://getcomposer.org/download/):
-    * OSX/Linux:
+6. Install and run [composer](https://getcomposer.org/download/):
+    * MacOS/Linux:
         - Go to the themes folder
-        - `wget https://getcomposer.org/composer.phar`
+        - `wget https://getcomposer.org/composer.phar` or `curl -O https://getcomposer.org/composer.phar`
         - `php composer.phar install`
-    * On windows you can install composer globaly and run `composer install` from the theme's folder
-6. Run `npm install` form the theme's folder
-7. Run `gulp build` from the theme's folder
-8. Clone the plugin's repository (https://github.com/Soluto/knowledgebase-plugins) to `knowledgebase-plugins` under the _root_ folder
-9. Run `docker-compose up -d` from the folder you cloned this repo to
-10. For Windows Only:
-    * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
-    * Then, you'll get another pop-up window where you need to type your local credentials (your Soluto username and password)  
-10. You are done! - you can now open http://localhost:8000/ to configure your wordpress instance.
-11. Activate our theme:
+    * On windows you can install composer globally and run `composer install` from the theme's folder
+7. Run `npm install` form the theme's folder
+    * If you don't have composer globally installed, you will get `sh: composer: command not found`. Just run `php composer.phar install` again from the previous step.
+8. Run `gulp build` from the theme's folder
+    * If you don't have gulp globally installed, run `node node_modules/gulp-cli/bin/gulp.js build`
+9. Clone the [plugin repository](https://github.com/Soluto/knowledgebase-plugins) under the _root_ folder (i.e. `_root_/knowledgebase-plugins`)
+10. Run `docker-compose up -d` from `_root_/knowledgebase-tests`
+    * For Windows Only:
+        * On the first run of docker-compose, you should get a pop-up asking permissions to share drive C:. If it doesn't show, rerun docker-compose.
+        * Then, you'll get another pop-up window where you need to type your local credentials (your Soluto username and password)  
+11. You are done! - you can now open http://localhost:8000/ to configure your wordpress instance.
+12. Activate our theme:
     - Click Appearance -> Themes
     - Click Activate on "Empty Theme"
-12. Copy from production all relevant plugins:
+13. Copy from production the relevant plugins:
     * Advanced Custom Fields Pro
     * CPT UI
-    * << TO COMPLETE >>
-13. Import post status definitions from production:
+    * << OTHERS? >>
+You can download the plugins with sftp from WP Engine (`kbsolutonew-youyousername@kbsolutonew.sftp.wpengine.com:2222/wp-content/plugins`). You will need to create staging/production users from the [WP Engine](https://my.wpengine.com/installs/kbsolutonew/sftp_users) website.
+14. Activate the desired plugins
+15. Import post status definitions from production:
     * In https://kb.mysoluto.com/wp-admin: Custom Fields -> Tools -> Toggle All -> Download Export File
     * In https://localhost:8000/wp-admin: Custom Fields -> Tools -> Choose File -> Import
-14. To enable debug logs:
+16. To enable debug logs:
     * Go to the `wordpress-docker-data` folder and open `wp-config.php` for editing
     * Replace 
     ```php
