@@ -59,8 +59,8 @@ You can download the plugins with sftp from WP Engine (`kbsolutonew-youyousernam
     * In https://kb.mysoluto.com/wp-admin: Custom Fields -> Tools -> Toggle All -> Download Export File
     * In https://localhost:8000/wp-admin: Custom Fields -> Tools -> Choose File -> Import
     
-16. Import Menu Editor Pro definitions from prod/staging (important: click Save Changes after import)
-17. Import CPT UI definitions from prod/staging
+16. Import CPT UI definitions from prod/staging
+17. Import Menu Editor Pro definitions from prod/staging (important: click Save Changes after import)
 18. Import Symptoms Library: Tools -> Export -> Symptoms Library -> click Download Export File, and then Import in the local env
 19. To enable debug logs:
     * Go to the `wordpress-docker-data` folder and open `wp-config.php` for editing
