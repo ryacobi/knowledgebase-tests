@@ -11,7 +11,7 @@
 
 	use tad\FunctionMocker\FunctionMocker;
 
-	class PassAndCallOriginalTest extends \PHPUnit\Framework\TestCase
+	class PassAndCallOriginalTest extends \PHPUnit_Framework_TestCase
 	{
 
 		public function setUp() {

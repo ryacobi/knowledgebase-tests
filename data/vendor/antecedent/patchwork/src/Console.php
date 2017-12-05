@@ -1,12 +1,11 @@
 <?php
 
 /**
- * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2017 Ignas Rudaitis
+ * @copyright  2010-2016 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
-namespace Patchwork\Console;
+namespace Patchwork\Console; \Patchwork\CallRerouting\deployQueue();
 
 use Patchwork\CodeManipulation as CM;
 
@@ -22,8 +21,6 @@ try {
 } catch (Patchwork\Exceptions\CachePathUnavailable $e) {
     exit("\nError: " . $e->getMessage() . "\n\n");
 }
-
-echo "\nCounting files...\n";
 
 $files = [];
 
@@ -47,7 +44,7 @@ const CONSOLE_WIDTH = 80;
 $progress = 0;
 
 for ($i = 0; $i < $count; $i++) {
-    CM\prime($files[$i]->getRealPath());
+    CM\prime($files[$i]);
     while ((int) (($i + 1) / $count * CONSOLE_WIDTH) > $progress) {
         echo '.';
         $progress++;

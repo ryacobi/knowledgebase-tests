@@ -9,15 +9,6 @@ use tad\FunctionMocker\ReplacementRequest;
 
 abstract class AbstractVerifier implements VerifierInterface, CallHandlerInterface
 {
-    /**
-     * @var string The PHPUnit framework to use depending on the available version.
-     */
-    protected $framework;
-
-    /**
-     * @var string The PHPUnit constraint class to use depending on the available version.
-     */
-    protected $constraintClass;
 
     /**
      * @var PHPUnit_Framework_MockObject_Matcher_InvokedRecorder
@@ -28,16 +19,6 @@ abstract class AbstractVerifier implements VerifierInterface, CallHandlerInterfa
      * @var ReplacementRequest
      */
     protected $request;
-
-    public function __construct()
-    {
-        $this->framework = class_exists('PHPUnit_Framework_TestCase') ?
-            'PHPUnit_Framework_TestCase'
-            : '\\PHPUnit\\Framework\\TestCase';
-        $this->constraintClass = class_exists('\PHPUnit_Framework_Constraint') ?
-            '\PHPUnit_Framework_Constraint'
-            : '\\PHPUnit\\Framework\\Constraint\\Constraint';
-    }
 
     public function wasNotCalled()
     {
@@ -98,10 +79,10 @@ abstract class AbstractVerifier implements VerifierInterface, CallHandlerInterfa
         $condition = $matchingStrategy->matches($callTimes);
         if (!$condition) {
             $message = sprintf('%s was called %d times, %s times expected.', $functionName, $callTimes, $times);
-            $this->fail($message);
+            \PHPUnit_Framework_Assert::fail($message);
         }
 
-        $this->assertTrue($condition);
+        \PHPUnit_Framework_Assert::assertTrue($condition);
 
         return $condition;
     }
@@ -125,27 +106,11 @@ abstract class AbstractVerifier implements VerifierInterface, CallHandlerInterfa
             }, $args);
             $args = "[\n\t" . implode(",\n\t", $printArgs) . ']';
             $message = sprintf('%s was called %d times with %s, %d times expected.', $functionName, $callTimes, $args, $times);
-            $this->fail($message);
+            \PHPUnit_Framework_Assert::fail($message);
         }
 
-        $this->assertTrue($condition);
+        \PHPUnit_Framework_Assert::assertTrue($condition);
 
         return $condition;
-    }
-
-    /**
-     * @param $condition
-     */
-    protected function assertTrue($condition)
-    {
-        call_user_func([$this->framework, 'assertTrue'], $condition);
-    }
-
-    /**
-     * @param string $message
-     */
-    protected function fail($message)
-    {
-        call_user_func([$this->framework, 'fail'], $message);
     }
 }

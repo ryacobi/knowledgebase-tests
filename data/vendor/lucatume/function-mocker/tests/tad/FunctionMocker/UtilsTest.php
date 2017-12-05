@@ -11,7 +11,7 @@
 
 	use tad\FunctionMocker\Utils;
 
-	class UtilsTest extends \PHPUnit\Framework\TestCase {
+	class UtilsTest extends \PHPUnit_Framework_TestCase {
 
 		private $rootDir;
 

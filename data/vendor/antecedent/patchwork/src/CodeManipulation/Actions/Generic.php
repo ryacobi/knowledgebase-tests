@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2017 Ignas Rudaitis
+ * @copyright  2010-2016 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
 namespace Patchwork\CodeManipulation\Actions\Generic;
@@ -11,13 +10,10 @@ namespace Patchwork\CodeManipulation\Actions\Generic;
 use Patchwork\CodeManipulation\Source;
 use Patchwork\Utils;
 
-const LEFT_ROUND = '(';
-const RIGHT_ROUND = ')';
-const LEFT_CURLY = '{';
-const RIGHT_CURLY = '}';
-const LEFT_SQUARE = '[';
-const RIGHT_SQUARE = ']';
-const SEMICOLON = ';';
+const LEFT_PARENTHESIS = "(";
+const RIGHT_PARENTHESIS = ")";
+const LEFT_CURLY_BRACKET = "{";
+const SEMICOLON = ";";
 
 function markPreprocessedFiles(&$target)
 {
@@ -26,27 +22,19 @@ function markPreprocessedFiles(&$target)
     };
 }
 
-function prependCodeToFunctions($code, $skipVoidTyped = true)
+function prependCodeToFunctions($code)
 {
-    return function(Source $s) use ($code, $skipVoidTyped) {
-        foreach ($s->all(T_FUNCTION) as $function) {
-            # Skip "use function"
-            $previous = $s->skipBack(Source::junk(), $function);
-            if ($s->is(T_USE, $previous)) {
-                continue;
-            }
-            if ($skipVoidTyped && isVoidTyped($s, $function)) {
-                continue;
-            }
-            $bracket = $s->next(LEFT_CURLY, $function);
+    return function(Source $s) use ($code) {
+        foreach ($s->findAll(T_FUNCTION) as $function) {
+            $bracket = $s->findNext(LEFT_CURLY_BRACKET, $function);
             if (Utils\generatorsSupported()) {
                 # Skip generators
-                $yield = $s->next(T_YIELD, $bracket);
-                if ($yield < $s->match($bracket)) {
+                $yield = $s->findNext(T_YIELD, $bracket);
+                if ($yield < $s->findMatchingBracket($bracket)) {
                     continue;
                 }
             }
-            $semicolon = $s->next(SEMICOLON, $function);
+            $semicolon = $s->findNext(SEMICOLON, $function);
             if ($bracket < $semicolon) {
                 $s->splice($code, $bracket + 1);
             }
@@ -54,26 +42,13 @@ function prependCodeToFunctions($code, $skipVoidTyped = true)
     };
 }
 
-function isVoidTyped(Source $s, $function)
-{
-    $parenthesis = $s->next(LEFT_ROUND, $function);
-    $next = $s->skip(Source::junk(), $s->match($parenthesis));
-    if ($s->is(T_USE, $next)) {
-        $next = $s->skip(Source::junk(), $s->match($s->next(LEFT_ROUND, $next)));
-    }
-    if ($s->is(':', $next)) {
-        return $s->read($s->skip(Source::junk(), $next), 1) === 'void';
-    }
-    return false;
-}
-
 function wrapUnaryConstructArguments($construct, $wrapper)
 {
     return function(Source $s) use ($construct, $wrapper) {
-        foreach ($s->all($construct) as $match) {
-            $pos = $s->next(LEFT_ROUND, $match);
-            $s->splice($wrapper . LEFT_ROUND, $pos + 1);
-            $s->splice(RIGHT_ROUND, $s->match($pos));
+        foreach ($s->findAll($construct) as $match) {
+            $pos = $s->findNext(LEFT_PARENTHESIS, $match);
+            $s->splice($wrapper . LEFT_PARENTHESIS, $pos + 1);
+            $s->splice(RIGHT_PARENTHESIS, $s->findMatchingBracket($pos));
         }
     };
 }
@@ -81,25 +56,25 @@ function wrapUnaryConstructArguments($construct, $wrapper)
 function injectFalseExpressionAtBeginnings($expression)
 {
     return function(Source $s) use ($expression) {
-        $openingTags = $s->all(T_OPEN_TAG);
-        $openingTagsWithEcho = $s->all(T_OPEN_TAG_WITH_ECHO);
+        $openingTags = $s->findAll(T_OPEN_TAG);
+        $openingTagsWithEcho = $s->findAll(T_OPEN_TAG_WITH_ECHO);
         if (empty($openingTags) && empty($openingTagsWithEcho)) {
             return;
         }
         if (!empty($openingTags) &&
             (empty($openingTagsWithEcho) || reset($openingTags) < reset($openingTagsWithEcho))) {
             $pos = reset($openingTags);
-            $namespaceKeyword = $s->next(T_NAMESPACE, $pos);
+            $namespaceKeyword = $s->findNext(T_NAMESPACE, $pos);
             if ($namespaceKeyword !== INF) {
-                $semicolon = $s->next(SEMICOLON, $namespaceKeyword);
-                $leftBracket = $s->next(LEFT_CURLY, $namespaceKeyword);
+                $semicolon = $s->findNext(SEMICOLON, $namespaceKeyword);
+                $leftBracket = $s->findNext(LEFT_CURLY_BRACKET, $namespaceKeyword);
                 $pos = min($semicolon, $leftBracket);
             }
-            $s->splice(' ' . $expression . ';', $pos + 1);
+            $s->splice(' ' . $expression . ";", $pos + 1);
         } else {
             $openingTag = reset($openingTagsWithEcho);
-            $closingTag = $s->next(T_CLOSE_TAG, $openingTag);
-            $semicolon = $s->next(SEMICOLON, $openingTag);
+            $closingTag = $s->findNext(T_CLOSE_TAG, $openingTag);
+            $semicolon = $s->findNext(SEMICOLON, $openingTag);
             $s->splice(' (' . $expression . ') ?: (', $openingTag + 1);
             $s->splice(') ', min($closingTag, $semicolon));
         }
@@ -109,16 +84,16 @@ function injectFalseExpressionAtBeginnings($expression)
 function injectCodeAfterClassDefinitions($code)
 {
     return function(Source $s) use ($code) {
-        foreach ($s->all(T_CLASS) as $match) {
-            if ($s->is([T_DOUBLE_COLON, T_NEW], $s->skipBack(Source::junk(), $match))) {
-                # Not a proper class definition: either ::class syntax or anonymous class
+        foreach ($s->findAll(T_CLASS) as $match) {
+            if ($s->findNext(T_DOUBLE_COLON, $match - 3) < $match) {
+                # ::class syntax, not a class definition
                 continue;
             }
-            $leftBracket = $s->next(LEFT_CURLY, $match);
+            $leftBracket = $s->findNext(LEFT_CURLY_BRACKET, $match);
             if ($leftBracket === INF) {
                 continue;
             }
-            $rightBracket = $s->match($leftBracket);
+            $rightBracket = $s->findMatchingBracket($leftBracket);
             if ($rightBracket === INF) {
                 continue;
             }

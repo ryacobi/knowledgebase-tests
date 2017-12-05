@@ -4,9 +4,8 @@
 
 
     use tad\FunctionMocker\FunctionMocker;
-    use tad\FunctionMocker\Tests\TestCase;
 
-    class InstanceMethodTest extends TestCase
+    class InstanceMethodTest extends \PHPUnit_Framework_TestCase
     {
 
         /**
@@ -294,7 +293,7 @@
         public function it_should_allow_verifying_an_instance_method_was_called_times_when_spying($times, $calls, $shouldThrow)
         {
             if ($shouldThrow) {
-                $this->expectFailure();
+                $this->setExpectedException('\PHPUnit_Framework_AssertionFailedError');
             }
             $spy = FunctionMocker::replace($this->testClass . '::methodOne');
 
@@ -313,7 +312,7 @@
         public function it_should_allow_verifying_an_instance_method_was_called_times_with_args_when_spying($times, $calls, $shouldThrow)
         {
             if ($shouldThrow) {
-                $this->expectFailure();
+                $this->setExpectedException('\PHPUnit_Framework_AssertionFailedError');
             }
             $spy = FunctionMocker::replace($this->testClass . '::methodTwo');
 
@@ -425,7 +424,7 @@
         public function it_should_allow_verifying_method_calls_using_php_unit_constraints($in, $exp, $shouldThrow)
         {
             if ($shouldThrow) {
-                $this->expectFailure();
+                $this->setExpectedException('\PHPUnit_Framework_AssertionFailedError');
             }
 
             $sut = FunctionMocker::replace($this->testClass . '::methodThree');

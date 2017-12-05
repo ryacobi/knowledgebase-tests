@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2017 Ignas Rudaitis
+ * @copyright  2010-2016 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
 namespace Patchwork\CodeManipulation;
@@ -13,11 +12,6 @@ require __DIR__ . '/CodeManipulation/Stream.php';
 require __DIR__ . '/CodeManipulation/Actions/Generic.php';
 require __DIR__ . '/CodeManipulation/Actions/CallRerouting.php';
 require __DIR__ . '/CodeManipulation/Actions/CodeManipulation.php';
-require __DIR__ . '/CodeManipulation/Actions/Namespaces.php';
-require __DIR__ . '/CodeManipulation/Actions/RedefinitionOfInternals.php';
-require __DIR__ . '/CodeManipulation/Actions/RedefinitionOfLanguageConstructs.php';
-require __DIR__ . '/CodeManipulation/Actions/ConflictPrevention.php';
-require __DIR__ . '/CodeManipulation/Actions/RedefinitionOfNew.php';
 
 use Patchwork\Exceptions;
 use Patchwork\Utils;
@@ -35,7 +29,7 @@ function transform(Source $s)
 
 function transformString($code)
 {
-    $source = new Source($code);
+    $source = new Source(token_get_all($code));
     transform($source);
     return (string) $source;
 }
@@ -60,44 +54,14 @@ function cacheEnabled()
 
 function getCachedPath($file)
 {
-    if (State::$cacheIndexFile === null) {
-        $indexPath = Config\getCachePath() . '/index.csv';
-        if (file_exists($indexPath)) {
-            $table = array_map('str_getcsv', file($indexPath));
-            foreach ($table as $row) {
-                list($key, $value) = $row;
-                State::$cacheIndex[$key] = $value;
-            }
-        }
-        State::$cacheIndexFile = fopen($indexPath, 'a');
-    }
-    $hash = md5($file);
-    $key = $hash;
-    $suffix = 0;
-    while (isset(State::$cacheIndex[$key]) && State::$cacheIndex[$key] !== $file) {
-        $key = $hash . '_' . $suffix++;
-    }
-    if (!isset(State::$cacheIndex[$key])) {
-        fputcsv(State::$cacheIndexFile, [$key, $file]);
-        State::$cacheIndex[$key] = $file;
-    }
-    return Config\getCachePath() . '/' . $key . '.php';
-}
-
-function storeInCache(Source $source)
-{
-    file_put_contents(getCachedPath($source->file), $source);
+    return Config\getCachePath() . '/' . urlencode($file);
 }
 
 function availableCached($file)
 {
-    if (!cacheEnabled()) {
-        return false;
-    }
-    $cached = getCachedPath($file);
-    return file_exists($cached) &&
-           filemtime($file) <= filemtime($cached) &&
-           Config\getTimestamp() <= filemtime($cached);
+    return cacheEnabled() &&
+    file_exists(getCachedPath($file)) &&
+    filemtime($file) <= filemtime(getCachedPath($file));
 }
 
 function internalToCache($file)
@@ -119,11 +83,11 @@ function transformAndOpen($file)
     }
     $resource = fopen(OUTPUT_DESTINATION, OUTPUT_ACCESS_MODE);
     $code = file_get_contents($file, true);
-    $source = new Source($code);
+    $source = new Source(token_get_all($code));
     $source->file = $file;
     transform($source);
     if (!internalToCache($file) && cacheEnabled()) {
-        storeInCache($source);
+        file_put_contents(getCachedPath($file), $source);
         return transformAndOpen($file);
     }
     fwrite($resource, $source);
@@ -155,6 +119,4 @@ class State
 {
     static $actions = [];
     static $importListeners = [];
-    static $cacheIndex = [];
-    static $cacheIndexFile;
 }

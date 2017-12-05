@@ -30,11 +30,6 @@ class Step implements StepInterface
      */
     protected $request;
 
-	/**
-	 * Step constructor.
-	 */
-	public function __construct() {}
-
     public static function instance($class)
     {
         \Arg::_($class, 'Class name')
