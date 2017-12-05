@@ -1,8 +1,9 @@
 <?php
 
 /**
+ * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2016 Ignas Rudaitis
+ * @copyright  2010-2017 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
 namespace Patchwork\Exceptions;
@@ -32,7 +33,7 @@ abstract class CallbackException extends Exception
 
 class NotUserDefined extends CallbackException
 {
-    protected $message = "%s is not a user-defined function or method";
+    protected $message = 'Please include {"redefinable-internals": ["%s"]} in your patchwork.json.';
 }
 
 class DefinedTooEarly extends CallbackException
@@ -44,6 +45,16 @@ class DefinedTooEarly extends CallbackException
                          "This is likely a result of an improper setup; see readme for details.";
         parent::__construct($callback);
     }
+}
+
+class InternalMethodsNotSupported extends CallbackException
+{
+    protected $message = "Methods of internal classes (such as %s) are not yet redefinable in Patchwork 2.1.";
+}
+
+class InternalsNotSupportedOnHHVM extends CallbackException
+{
+    protected $message = "As of version 2.1, Patchwork cannot redefine internal functions and methods (such as %s) on HHVM.";
 }
 
 class CachePathUnavailable extends Exception
@@ -97,4 +108,9 @@ class CachePathConflict extends ConfigException
             $second
         ));
     }
+}
+
+class NewKeywordNotRedefinable extends ConfigException
+{
+    protected $message = 'Please set {"new-keyword-redefinable": true} to redefine instantiations';
 }

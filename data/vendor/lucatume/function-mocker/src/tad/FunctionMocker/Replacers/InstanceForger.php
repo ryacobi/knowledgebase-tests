@@ -25,7 +25,7 @@ class InstanceForger
     protected $wrappedMockObjectsCache = [];
 
     /**
-     * @var \PHPUnit_Framework_TestCase
+     * @var \PHPUnit_Framework_TestCase|\PHPUnit\Framework\TestCase
      */
     private $testCase;
 
@@ -60,12 +60,17 @@ class InstanceForger
             $mockObject = $this->testCase->getMockBuilder($className)->disableOriginalConstructor()
                 ->setMethods($methods)->getMockForTrait();
         } else {
-            $mockObject = $this->testCase->getMockBuilder($className)
-                ->disableOriginalConstructor()
-                ->disableOriginalClone()
-                ->disableArgumentCloning()
-                ->disallowMockingUnknownTypes()
-                ->getMock();
+			$mockBuilder = $this->testCase->getMockBuilder($className)
+				->disableOriginalConstructor()
+				->disableOriginalClone()
+				->disableArgumentCloning();
+
+			// removed in later versions of PHPUnit
+			if (method_exists($mockBuilder, 'disallowMockingUnknownTypes')) {
+				$mockBuilder->disallowMockingUnknownTypes();
+			}
+
+			$mockObject = $mockBuilder->getMock();
         }
 
         return $mockObject;
@@ -123,9 +128,9 @@ class InstanceForger
     }
 
     /**
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param \PHPUnit_Framework_TestCase|\PHPUnit\Framework\TestCase $testCase
      */
-    public function setTestCase(\PHPUnit_Framework_TestCase $testCase)
+    public function setTestCase($testCase)
     {
         $this->testCase = $testCase;
         $this->invokedRecorder = $this->testCase->any();

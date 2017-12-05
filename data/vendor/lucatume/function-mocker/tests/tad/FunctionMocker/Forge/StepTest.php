@@ -4,7 +4,7 @@
     use tad\FunctionMocker\Forge\Step;
     use tad\FunctionMocker\Replacers\InstanceForger;
 
-    class StepTest extends \PHPUnit_Framework_TestCase
+    class StepTest extends \PHPUnit\Framework\TestCase
     {
         protected $class;
 
@@ -19,7 +19,7 @@
          */
         public function it_should_throw_if_passing_a_non_string_arg()
         {
-            $this->setExpectedException('\Exception');
+            $this->expectException('\Exception');
             Step::instance(23);
         }
 
@@ -29,8 +29,9 @@
          */
         public function it_should_throw_if_the_class_name_is_a_non_existing_class()
         {
-            $this->setExpectedException('\Exception');
+            $this->expectException('\Exception');
             Step::instance('SomeUnrealClass');
+            $this->assertTrue(true);
         }
 
         /**
@@ -56,6 +57,7 @@
             $forger = new InstanceForger();
             $forger->setTestCase($this);
             $sut->setInstanceForger($forger);
+            $this->assertTrue(true);
         }
 
         /**
@@ -212,6 +214,8 @@
             $mock->wasCalledOnce('methodOne');
             $mock->wasCalledOnce('methodTwo');
             $mock->wasCalledWithTimes(['foo'], 0, 'methodOne');
+
+            $this->assertTrue(true);
         }
 
         /**
@@ -276,6 +280,7 @@
 
             $verifier = $sut->verify();
             $verifier->methodOne()->wasCalledOnce();
+            $this->assertTrue(true);
         }
 
         /**
@@ -292,6 +297,7 @@
 
             $verifier = $sut->verify();
             $verifier->methodOne()->wasNotCalled();
+            $this->assertTrue(true);
         }
 
         /**
@@ -311,6 +317,7 @@
 
             $verifier = $sut->verify();
             $verifier->methodOne()->wasCalledTimes(3);
+            $this->assertTrue(true);
         }
 
         /**
@@ -328,6 +335,7 @@
 
             $verifier = $sut->verify();
             $verifier->methodThree('foo', 'bar')->wasCalledOnce();
+            $this->assertTrue(true);
         }
 
         /**
@@ -347,6 +355,7 @@
 
             $verifier = $sut->verify();
             $verifier->methodThree('foo', 'bar')->wasCalledTimes(3);
+            $this->assertTrue(true);
         }
 
         /**

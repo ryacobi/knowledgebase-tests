@@ -4,9 +4,8 @@
 
 	use tad\FunctionMocker\FunctionMocker;
 	use tad\FunctionMocker\MockCallLogger;
-	use tad\FunctionMocker\TestCase;
 
-	class StaticMethodTest extends \PHPUnit_Framework_TestCase
+	class StaticMethodTest extends TestCase
 	{
 
 		public function setUp() {
@@ -86,7 +85,7 @@
 			$spy->wasCalledWithTimes( array( 11 ), 1 );
 			$spy->wasNotCalledWith( array( 10 ) );
 
-			$this->setExpectedException( '\PHPUnit_Framework_AssertionFailedError' );
+			$this->expectFailure();
 			$spy->wasCalledTimes( 0 );
 		}
 	}

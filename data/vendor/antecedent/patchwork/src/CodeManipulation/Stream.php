@@ -1,8 +1,9 @@
 <?php
 
 /**
+ * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2016 Ignas Rudaitis
+ * @copyright  2010-2017 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
 namespace Patchwork\CodeManipulation;
@@ -31,7 +32,9 @@ class Stream
     public static function unwrap()
     {
         foreach (static::$protocols as $protocol) {
+            set_error_handler(function() {});
             stream_wrapper_restore($protocol);
+            restore_error_handler();
         }
     }
 
@@ -97,7 +100,11 @@ class Stream
     {
         $this->unwrap();
         set_error_handler(function() {});
-        $result = stat($path);
+        try {
+            $result = stat($path);
+        } catch (\Exception $e) {
+            $result = null;
+        }
         restore_error_handler();
         $this->wrap();
         if ($result) {

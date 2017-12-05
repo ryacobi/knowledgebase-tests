@@ -1,8 +1,9 @@
 <?php
 
 /**
+ * @link       http://patchwork2.org/
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
- * @copyright  2010-2016 Ignas Rudaitis
+ * @copyright  2010-2017 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  */
 namespace Patchwork\CodeManipulation;
@@ -14,6 +15,12 @@ class Source
     const TYPE_OFFSET = 0;
     const STRING_OFFSET = 1;
 
+    const PREPEND = 'PREPEND';
+    const APPEND = 'APPEND';
+    const OVERWRITE = 'OVERWRITE';
+
+    const ANY = null;
+
     public $tokens;
     public $tokensByType;
     public $splices;
@@ -21,35 +28,44 @@ class Source
     public $code;
     public $file;
     public $matchingBrackets;
+    public $levels;
+    public $levelBeginnings;
+    public $levelEndings;
+    public $tokensByLevel;
+    public $tokensByLevelAndType;
+    public $cache;
 
-    public function __construct($tokens)
+    function __construct($string)
     {
-        $this->initialize(is_array($tokens) ? $tokens : token_get_all($tokens));
+        $this->code = $string;
+        $this->initialize();
     }
 
-    public function initialize(array $tokens)
+    function initialize()
     {
-        $this->tokens = $tokens;
+        $this->tokens = token_get_all($this->code);
         $this->tokens[] = [T_WHITESPACE, ""];
-        $this->tokensByType = $this->indexTokensByType($this->tokens);
-        $this->matchingBrackets = $this->matchBrackets($this->tokens);
-        $this->splices = $this->spliceLengths = [];
+        $this->indexTokensByType();
+        $this->collectBracketMatchings();
+        $this->collectLevelInfo();
+        $this->splices = [];
+        $this->spliceLengths = [];
+        $this->cache = [];
     }
 
-    public function indexTokensByType(array $tokens)
+    function indexTokensByType()
     {
-        $tokensByType = [];
-        foreach ($tokens as $offset => $token) {
-            $tokensByType[$token[self::TYPE_OFFSET]][] = $offset;
+        $this->tokensByType = [];
+        foreach ($this->tokens as $offset => $token) {
+            $this->tokensByType[$token[self::TYPE_OFFSET]][] = $offset;
         }
-        return $tokensByType;
     }
 
-    public function matchBrackets(array $tokens)
+    function collectBracketMatchings()
     {
-        $matches = [];
+        $this->matchingBrackets = [];
         $stack = [];
-        foreach ($tokens as $offset => $token) {
+        foreach ($this->tokens as $offset => $token) {
             $type = $token[self::TYPE_OFFSET];
             switch ($type) {
                 case '(':
@@ -63,45 +79,179 @@ class Source
                 case ']':
                 case '}':
                     $top = array_pop($stack);
-                    $matches[$top] = $offset;
-                    $matches[$offset] = $top;
+                    $this->matchingBrackets[$top] = $offset;
+                    $this->matchingBrackets[$offset] = $top;
                     break;
             }
         }
-        return $matches;
     }
 
-    public function findNext($type, $offset)
+    function collectLevelInfo()
     {
-        if (!isset($this->tokensByType[$type])) {
-            return INF;
+        $level = 0;
+        $this->levels = [];
+        $this->tokensByLevel = [];
+        $this->levelBeginnings = [];
+        $this->levelEndings = [];
+        $this->tokensByLevelAndType = [];
+        foreach ($this->tokens as $offset => $token) {
+            $type = $token[self::TYPE_OFFSET];
+            switch ($type) {
+                case '(':
+                case '[':
+                case '{':
+                case T_CURLY_OPEN:
+                case T_DOLLAR_OPEN_CURLY_BRACES:
+                    $level++;
+                    Utils\appendUnder($this->levelBeginnings, $level, $offset);
+                    break;
+                case ')':
+                case ']':
+                case '}':
+                    Utils\appendUnder($this->levelEndings, $level, $offset);
+                    $level--;
+            }
+            $this->levels[$offset] = $level;
+            Utils\appendUnder($this->tokensByLevel, $level, $offset);
+            Utils\appendUnder($this->tokensByLevelAndType, [$level, $type], $offset);
         }
-        $next = Utils\findFirstGreaterThan($this->tokensByType[$type], $offset);
-        return isset($this->tokensByType[$type][$next]) ? $this->tokensByType[$type][$next] : INF;
+        Utils\appendUnder($this->levelBeginnings, 0, 0);
+        Utils\appendUnder($this->levelEndings, 0, count($this->tokens) - 1);
     }
 
-    public function findAll($type)
+    function has($types)
     {
-        $tokens = &$this->tokensByType[$type];
-        if (!isset($tokens)) {
-            $tokens = [];
+        foreach ((array) $types as $type) {
+            if ($this->all($type) !== []) {
+                return true;
+            }
         }
-        return $tokens;
+        return false;
     }
 
-    public function findMatchingBracket($offset)
+    function is($types, $offset)
+    {
+        foreach ((array) $types as $type) {
+            if ($this->tokens[$offset][self::TYPE_OFFSET] === $type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function skip($types, $offset, $direction = 1)
+    {
+        $offset += $direction;
+        $types = (array) $types;
+        while ($offset < count($this->tokens) && $offset >= 0) {
+            if (!in_array($this->tokens[$offset][self::TYPE_OFFSET], $types)) {
+                return $offset;
+            }
+            $offset += $direction;
+        }
+        return ($direction > 0) ? INF : -1;
+    }
+
+    function skipBack($types, $offset)
+    {
+        return $this->skip($types, $offset, -1);
+    }
+
+    function within($types, $low, $high)
+    {
+        $result = [];
+        foreach ((array) $types as $type) {
+            $candidates = isset($this->tokensByType[$type]) ? $this->tokensByType[$type] : [];
+            $result = array_merge(Utils\allWithinRange($candidates, $low, $high), $result);
+        }
+        return $result;
+    }
+
+    function read($offset, $count = 1)
+    {
+        $result = '';
+        $pos = $offset;
+        while ($pos < $offset + $count) {
+            if (isset($this->tokens[$pos][self::STRING_OFFSET])) {
+                $result .= $this->tokens[$pos][self::STRING_OFFSET];
+            } else {
+                $result .= $this->tokens[$pos];
+            }
+            $pos++;
+        }
+        return $result;
+    }
+
+    function siblings($types, $offset)
+    {
+        $level = $this->levels[$offset];
+        $begin = Utils\lastNotGreaterThan(Utils\access($this->levelBeginnings, $level, []), $offset);
+        $end = Utils\firstGreaterThan(Utils\access($this->levelEndings, $level, []), $offset);
+        if ($types === self::ANY) {
+            return Utils\allWithinRange($this->tokensByLevel[$level], $begin, $end);
+        } else {
+            $result = [];
+            foreach ((array) $types as $type) {
+                $candidates = Utils\access($this->tokensByLevelAndType, [$level, $type], []);
+                $result = array_merge(Utils\allWithinRange($candidates, $begin, $end), $result);
+            }
+            return $result;
+        }
+    }
+
+    function next($types, $offset)
+    {
+        if (!is_array($types)) {
+            $candidates = Utils\access($this->tokensByType, $types, []);
+            return Utils\firstGreaterThan($candidates, $offset);
+        }
+        $result = INF;
+        foreach ($types as $type) {
+            $result = min($this->next($type, $offset), $result);
+        }
+        return $result;
+    }
+
+    function all($types)
+    {
+        if (!is_array($types)) {
+            return Utils\access($this->tokensByType, $types, []);
+        }
+        $result = [];
+        foreach ($types as $type) {
+            $result = array_merge($result, $this->all($type));
+        }
+        sort($result);
+        return $result;
+    }
+
+    function match($offset)
     {
         return isset($this->matchingBrackets[$offset]) ? $this->matchingBrackets[$offset] : INF;
     }
 
-    public function splice($splice, $offset, $length = 0)
+    function splice($splice, $offset, $length = 0, $policy = self::OVERWRITE)
     {
-        $this->splices[$offset] = $splice;
-        $this->spliceLengths[$offset] = $length;
+        if ($policy === self::OVERWRITE) {
+            $this->splices[$offset] = $splice;
+        } elseif ($policy === self::PREPEND || $policy === self::APPEND) {
+            if (!isset($this->splices[$offset])) {
+                $this->splices[$offset] = '';
+            }
+            if ($policy === self::PREPEND) {
+                $this->splices[$offset] = $splice . $this->splices[$offset];
+            } elseif ($policy === self::APPEND) {
+                $this->splices[$offset] .= $splice;
+            }
+        }
+        if (!isset($this->spliceLengths[$offset])) {
+            $this->spliceLengths[$offset] = 0;
+        }
+        $this->spliceLengths[$offset] = max($length, $this->spliceLengths[$offset]);
         $this->code = null;
     }
 
-    public function createCodeFromTokens()
+    function createCodeFromTokens()
     {
         $splices = $this->splices;
         $code = "";
@@ -119,7 +269,12 @@ class Source
         $this->code = $code;
     }
 
-    public function __toString()
+    static function junk()
+    {
+        return [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT];
+    }
+
+    function __toString()
     {
         if ($this->code === null) {
             $this->createCodeFromTokens();
@@ -127,8 +282,33 @@ class Source
         return (string) $this->code;
     }
 
-    public function flush()
+    function flush()
     {
         $this->initialize(token_get_all($this));
+    }
+
+    /**
+     * @since 2.1.0
+     */
+    function cache(array $args, \Closure $function)
+    {
+        $found = true;
+        $trace = debug_backtrace()[1];
+        $location = $trace['file'] . ':' . $trace['line'];
+        $result = &$this->cache;
+        foreach (array_merge([$location], $args) as $step) {
+            if (!is_scalar($step)) {
+                throw new \LogicException;
+            }
+            if (!isset($result[$step])) {
+                $result[$step] = [];
+                $found = false;
+            }
+            $result = &$result[$step];
+        }
+        if (!$found) {
+            $result = call_user_func_array($function->bindTo($this), $args);
+        }
+        return $result;
     }
 }
