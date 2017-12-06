@@ -11,10 +11,12 @@ RUN wget http://phar.phpunit.de/phpunit.phar; \
     chmod +x phpunit.phar; \
     mv phpunit.phar /usr/bin/phpunit; 
 
-RUN ln -s /var/www/html/wp-content/themes/empty-theme /var/www/html/data/themedir1
-
 # Move to WP directory
 WORKDIR /var/www/html
 
 # Pull the tests from github into non empty directory
 COPY . /var/www/html
+
+RUN mkdir /var/www/html/wp-content/themes/empty-theme
+
+RUN ln -s /var/www/html/wp-content/themes/empty-theme /var/www/html/data/themedir1
