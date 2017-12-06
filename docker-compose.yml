@@ -26,7 +26,7 @@ services:
        - wordpress_test_network
      volumes:
        - ./knowledgebase-plugins:/var/www/html/wp-content/plugins
-       - ./knowledgebase-wordpress-theme:/var/www/html/wp-content/themes/empty-theme
+       - ./knowledgebase-wordpress-theme/empty-theme:/var/www/html/wp-content/themes/empty-theme
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
