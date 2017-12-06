@@ -8,7 +8,7 @@
 	<testsuites>
 		<testsuite>
 			<directory prefix="test-" suffix=".php">./wp-content/plugins/*/tests</directory>
-			<directory prefix="test-" suffix=".php">./wp-content/themes/empty-theme/empty-theme/tests</directory>
+			<directory prefix="test-" suffix=".php">./wp-content/themes/empty-theme/tests</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
