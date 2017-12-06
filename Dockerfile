@@ -17,6 +17,6 @@ WORKDIR /var/www/html
 # Pull the tests from github into non empty directory
 COPY . /var/www/html
 
-RUN mkdir /var/www/html/wp-content/themes/empty-theme
+RUN mkdir -p /var/www/html/wp-content/themes/empty-theme
 
 RUN ln -s /var/www/html/wp-content/themes/empty-theme /var/www/html/data/themedir1
