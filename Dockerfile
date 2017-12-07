@@ -4,7 +4,9 @@ FROM wordpress:4.8.2-php7.0-apache
 RUN apt-get update && \
     apt-get -y install git && \
     apt-get -y install php5-mysql && \
-    apt-get -y install wget
+    apt-get -y install wget && \
+    apt-get -y install zip && \
+    apt-get -y install unzip
 
 # Get the latest version of phpunit
 RUN wget http://phar.phpunit.de/phpunit.phar; \
