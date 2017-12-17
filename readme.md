@@ -62,7 +62,13 @@ You can download the plugins with sftp from WP Engine (`kbsolutonew-youyousernam
 16. Import CPT UI definitions from prod/staging
 17. Import Menu Editor Pro definitions from prod/staging (important: click Save Changes after import)
 18. Import Symptoms Library: Tools -> Export -> Symptoms Library -> click Download Export File, and then Import in the local env
-19. To enable debug logs:
+19. To enable Languages, and generation of Topic IDs:
+
+- Go to Languages -> Languages, and verify the English is the default language (marked with a star on the languages table)
+
+- Go to Languages -> Settings -> Custom post types and Taxonomies -> Settings, and check all relevant post types. Then, click "Save Changes"
+
+20. To enable debug logs:
     * Go to the `wordpress-docker-data` folder and open `wp-config.php` for editing
     * Replace 
     ```php
