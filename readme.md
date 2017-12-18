@@ -68,7 +68,15 @@ You can download the plugins with sftp from WP Engine (`kbsolutonew-youyousernam
 
 - Go to Languages -> Settings -> Custom post types and Taxonomies -> Settings, and check *all* post types except: `Alerts`, `Multi Article | Steps` and `Symptoms Library`. Then, click "Save Changes"
 
-20. To enable debug logs:
+20. Change permalink settings as follows:
+
+- Go to Settings -> Permalinks
+
+- Choose `Custom Structure` and in the text box fill in `/%post_id%`.
+
+- Save changes
+
+21. To enable debug logs:
     * Go to the `wordpress-docker-data` folder and open `wp-config.php` for editing
     * Replace 
     ```php
