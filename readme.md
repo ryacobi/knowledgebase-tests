@@ -33,6 +33,7 @@ This folder will function as a "view" to the wordpress folder in the container. 
 6. Install and run [composer](https://getcomposer.org/download/):
     * MacOS/Linux:
         - Go to the themes folder
+        - Make sure php is installed. If not, run: `curl -s http://php-osx.liip.ch/install.sh | bash -s 7.2`
         - `wget https://getcomposer.org/composer.phar` or `curl -O https://getcomposer.org/composer.phar`
         - `php composer.phar install`
     * On windows you can install composer globally and run `composer install` from the theme's folder
